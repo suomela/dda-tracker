@@ -63,7 +63,7 @@ mainHtml c = do s <- scriptName
                 stats <- liftIO $ getStats c
                 return $
                   form ! [method "post", action s]
-                    << paragraph << submit "" "Generate new private url"
+                    << paragraph << submit "" "Create a new personal page"
                   +++
                   qtable (\q a -> td ! [theclass (className "a" a)] << stat stats q a) "common"
 
