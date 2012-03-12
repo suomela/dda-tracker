@@ -16,7 +16,7 @@ dClassName d (c:s) | c `elem` ['a'..'z']++['A'..'Z']++['0'..'9'] = d ++ [c] ++ d
                    | otherwise = dClassName "-" s
 className prefix suffix = prefix ++ dClassName "-" suffix
 
-qtable f = table << [h, concatHtml $ map row questions]
+qtable f k = table ! [theclass k] << [h, concatHtml $ map row questions]
   where h = tr ! [theclass "header"] << map (td<<) ("":answers)
         row q  = tr ! [theclass (className "q" q)] << [td ! [theclass "sider"] << q,
                                               concatHtml $ map (f q) answers]
@@ -47,12 +47,12 @@ userHtml conn name =
                                           << [radio q a, stat stats q a]
        u <- userUrl name
        uri <- fmap show $ requestURI
-       return $ paragraph << "You should bookmark this page immediately so that you can return to update your answers!" 
+       return $ paragraph ! [theclass "info1"] << "You should bookmark this page immediately so that you can return to update your answers!" 
                 +++
-                paragraph << ("The URL of this page is: " +++ tt << uri)
+                paragraph ! [theclass "info2"] << ("The URL of this page is: " +++ tt << uri)
                 +++
                 form ! [method "post", action u]
-                   << [qtable r,
+                   << [qtable r "user",
                        paragraph << submit "" "Save"]
 
 userPage conn name = do m <- requestMethod
@@ -65,7 +65,7 @@ mainHtml c = do s <- scriptName
                   form ! [method "post", action s]
                     << paragraph << submit "" "Generate new private url"
                   +++
-                  qtable (\q a -> td ! [theclass (className "a" a)] << stat stats q a)
+                  qtable (\q a -> td ! [theclass (className "a" a)] << stat stats q a) "common"
 
 generateUser = do i <- liftIO $ randomRIO (0,idMax)
                   return $ showHex i ""
